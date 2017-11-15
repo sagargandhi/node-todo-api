@@ -20,6 +20,18 @@ app.post('/todos', (request, response)=> {
     } )
 });
 
+app.get('/todos', (request, response) =>{
+
+    var docs;
+    Todo.find().then(documents => {
+        docs = documents;
+        response.status(200).send(docs);
+    }, error => {
+        response.status(400).send(error);
+    })
+
+})
+
 var port = 3000;
 app.listen(port, ()=> console.log(`Listening on port ${port}`));
 
