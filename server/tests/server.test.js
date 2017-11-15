@@ -6,8 +6,17 @@ var {Todo} = require('./../db/models/todo');
 
 describe('Post todos', () => {
 
+    var sampleTodos = [{
+            text: 'Test Todo1'
+        },
+        {
+            text: 'Test Todo2'
+        }];
+
     beforeEach((done) => {
-        Todo.remove().then( () => done() );
+        Todo.remove().then( () =>{
+             return Todo.insertMany(sampleTodos);
+            }).then(() => done());
     })
 
     it('should post a todo', (done) => {
@@ -25,9 +34,9 @@ describe('Post todos', () => {
                     return done(error);
                 }
 
-                Todo.find().then((todos) => {
-                    expect(todos.length).toBe(1);
-                    expect(todos[0].text).toBe(text);
+                Todo.find({text}).then((results) => {
+                    expect(results.length).toBe(1);
+                    expect(results[0].text).toBe(text);
                     done();
                 }).catch(e => done(e))
             });
@@ -46,11 +55,28 @@ describe('Post todos', () => {
                 }
 
                 Todo.find().then( (todos) =>{
-                    expect(todos.length).toBe(0);
+                    expect(todos.length).toBe(2);
                     done();
                 }).catch(e => done(e));
             });
 
     });
+});
 
+describe('Get /todos', () => {
+    
+    it('should get all todos', (done) => {
+    request(app)
+        .get('/todos')
+        .expect(200)
+        .expect((response) => {
+            expect(response.body.todos.length).toBe(2);
+            done();
+        })
+        .end((error, response) => {
+            if(error){
+                done(error);
+            }
+        })
+    });     
 });
