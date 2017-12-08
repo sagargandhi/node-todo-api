@@ -3,7 +3,6 @@ var bodyParser = require('body-parser');
 
 var {User} = require('./db/models/user');
 var {Todo} = require('./db/models/todo');
-var {ObjectID} = require('mongodb');
 
 var app = express();
 
@@ -19,30 +18,6 @@ app.post('/todos', (request, response)=> {
     }, error => {
         response.status(400).send(error);
     } )
-});
-
-app.get('/todos', (request, response) =>{
-
-    Todo.find().then(todos => {
-        response.status(200).send({todos});
-    }, error => {
-        response.status(400).send(error);
-    })
-
-});
-
-app.get('/todos/:id', (request, response) => 
-{
-    var id = request.params.id;
-    if (!ObjectID.isValid(id)){
-        response.status(404).send({});
-    }
-    else {
-        Todo.findById(id).then((todo) => {
-            response.status(200).send({todo});
-        }).catch(e => response.status(400).send(e));
-    }
-
 });
 
 var port = 3000;
